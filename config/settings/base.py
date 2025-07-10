@@ -14,6 +14,8 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
+AUTH_USER_MODEL = "accounts.User"
+
 # Application definition
 BASE_APPS = [
     "jazzmin",
@@ -28,6 +30,8 @@ BASE_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework.authtoken",
     "corsheaders",
     "drf_yasg",
     "django_cleanup.apps.CleanupSelectedConfig",
@@ -144,6 +148,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Django Rest Framework configurations
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "common.utils.custom_exception_handler.custom_exception_handler",  # noqa
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
 JAZZMIN_UI_TWEAKS = {"theme": "superhero ", "dark_mode_theme": "cyborg"}
