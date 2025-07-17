@@ -1,11 +1,19 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import RefreshToken, UntypedToken
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
-from .serializers import LoginSerializer, RegisterSerializer
+from .models import Seller
+from .serializers import (
+    LoginSerializer,
+    RegisterSerializer,
+    SellerRegistrationSerializer,
+    UpdateProfileSerializer,
+)
 
 User = get_user_model()
 
@@ -60,7 +68,6 @@ class CustomTokenRefreshView(TokenRefreshView):
 
 
 class CustomTokenVerifyView(TokenVerifyView):
-
     def post(self, request, *args, **kwargs):
         token = request.data.get("token")
         try:
@@ -86,4 +93,69 @@ class LoginView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.validated_data, status=200)
+        data = serializer.validated_data
+        access_token = data["access_token"]
+        refresh_token = data["refresh_token"]
+        response = Response(
+            {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user": data["user"],
+            },
+            status=200,
+        )
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=False,
+            samesite="Lax",
+            max_age=60 * 60,
+        )
+        response.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            httponly=True,
+            secure=False,
+            samesite="Lax",
+            max_age=60 * 60 * 24,
+        )
+        return response
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        return Response(
+            {
+                "id": user.id,
+                "full_name": user.full_name,
+                "phone_number": user.phone_number,
+                "profile_photo": (
+                    request.build_absolute_uri(user.profile_photo.url)
+                    if user.profile_photo
+                    else None
+                ),
+                "address": {
+                    "name": user.address.name if user.address else None,
+                    "lat": user.address.lat if user.address else None,
+                    "long": user.address.lng if user.address else None,
+                },
+            }
+        )
+
+
+class UpdateProfileView(generics.UpdateAPIView):
+    serializer_class = UpdateProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
+class SellerRegistrationView(generics.CreateAPIView):
+    queryset = Seller.objects.all()
+    serializer_class = SellerRegistrationSerializer
+    permission_classes = [permissions.AllowAny]

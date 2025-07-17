@@ -4,18 +4,15 @@ from .views import (
     CustomTokenRefreshView,
     CustomTokenVerifyView,
     LoginView,
+    MeView,
     RegisterView,
+    SellerRegistrationView,
+    UpdateProfileView,
 )
 
 urlpatterns = [
-    # path('edit/', UserEditView.as_view(), name='account-edit'),
     path("register/", RegisterView.as_view(), name="account-register"),
     path("login/", LoginView.as_view(), name="login"),
-    # path(
-    #     "seller/registration/",
-    #     SellerRegistrationView.as_view(),
-    #     name="seller-registration",
-    # )
     path(
         "token/refresh/",
         CustomTokenRefreshView.as_view(),
@@ -24,5 +21,11 @@ urlpatterns = [
     path(
         "token/verify/", CustomTokenVerifyView.as_view(), name="token_verify"
     ),
-    # path('me/', UserProfileView.as_view(), name='user-profile'),
+    path(
+        "seller/registration/",
+        SellerRegistrationView.as_view(),
+        name="seller-registration",
+    ),
+    path("edit/", UpdateProfileView.as_view(), name="edit-profile"),
+    path("me/", MeView.as_view(), name="me"),
 ]

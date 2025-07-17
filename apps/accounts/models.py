@@ -47,7 +47,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         Address, on_delete=models.SET_NULL, null=True, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
-
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -65,7 +64,6 @@ class Seller(models.Model):
         ("approved", "Approved"),
         ("rejected", "Rejected"),
     ]
-
     full_name = models.CharField(max_length=100)
     project_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20)

@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Address, User
+from .models import Address, Seller, User
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -109,15 +109,12 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         phone = data.get("phone_number")
         password = data.get("password")
-
         user = authenticate(phone_number=phone, password=password)
         if not user:
             raise serializers.ValidationError(
                 "Noto‘g‘ri foydalanuvchi nomi yoki parol"
             )
-
         refresh = RefreshToken.for_user(user)
-
         return {
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh),
@@ -127,3 +124,39 @@ class LoginSerializer(serializers.Serializer):
                 "phone_number": user.phone_number,
             },
         }
+
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "full_name",
+            "phone_number",
+            "profile_photo",
+            "address",
+        )
+        read_only_fields = ("profile_photo",)
+
+
+class SellerRegistrationSerializer(serializers.ModelSerializer):
+    address = AddressSerializer()
+
+    class Meta:
+        model = Seller
+        fields = (
+            "id",
+            "full_name",
+            "project_name",
+            "category",
+            "phone_number",
+            "address",
+        )
+        read_only_fields = ("id",)
+
+    def create(self, validated_data):
+        address_data = validated_data.pop("address")
+        address = Address.objects.create(**address_data)
+        registration = Seller.objects.create(
+            address=address, **validated_data, status="pending"
+        )
+        return registration

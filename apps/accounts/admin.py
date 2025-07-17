@@ -38,7 +38,6 @@ class UserAdmin(BaseUserAdmin):
         ),
         ("Important dates", {"fields": ("last_login", "created_at")}),
     )
-
     add_fieldsets = (
         (
             None,
@@ -48,7 +47,6 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     )
-
     filter_horizontal = (
         "groups",
         "user_permissions",
