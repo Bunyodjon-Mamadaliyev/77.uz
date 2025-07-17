@@ -147,7 +147,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Django Rest Framework configurations
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "common.utils.custom_exception_handler.custom_exception_handler",  # noqa
+    "DEFAULT_PAGINATION_CLASS": [
+        "rest_framework.pagination.LimitOffsetPagination"
+    ],
+    "PAGE_SIZE": 10,
+    "EXCEPTION_HANDLER": [
+        "common.utils.custom_exception_handler.custom_exception_handler",
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.TokenAuthentication",

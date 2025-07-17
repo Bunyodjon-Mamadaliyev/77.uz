@@ -1,6 +1,7 @@
-from common.exceptions import ObjectNotFound
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.views import exception_handler
+
+from apps.common.exceptions import ObjectNotFound
 
 
 def custom_exception_handler(exc, context):

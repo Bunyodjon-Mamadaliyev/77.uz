@@ -41,7 +41,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("default-admin-panel/", admin.site.urls),
     path("accounts/", include("apps.accounts.urls")),
-    # path("", include("apps.commons.urls")),
+    path("common/", include("apps.commons.urls")),
     # path("", include("apps.store.urls")),
 ]
 
