@@ -1,0 +1,54 @@
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.pytest_cache
+  | \.tox
+  | (\.venv|venv|env|\.env)
+  | \.vscode
+  | _build
+  | buck-out
+  | build
+  | dist
+  | static
+  | media
+  | deployments
+  | scripts
+  | requirements
+  | templates
+  | migrations
+)/
+'''
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+exclude = [
+  ".bzr", ".direnv", ".eggs", ".git", ".hg", ".mypy_cache", ".nox", ".pants.d",
+  ".pytype", ".ruff_cache", ".svn", ".tox", ".venv", "venv", ".env",
+  "__pypackages__", "_build", "buck-out", "build", "dist", "node_modules",
+  "static", "media", "deployments", "requirements", "migrations",
+  ".gitignore", ".vscode"
+]
+per-file-ignores = {}
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
+fixable = ["A", "B", "C", "D", "E", "F", "W", "I"]
+unfixable = []
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 5
+
+[tool.ruff.lint.isort]
+force-wrap-aliases = true
+combine-as-imports = true
+split-on-trailing-comma = true
